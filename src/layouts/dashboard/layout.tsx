@@ -80,10 +80,10 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
             ),
             rightArea: (
               <Box gap={1} display="flex" alignItems="center">
-                <Searchbar />
-                <LanguagePopover data={_langs} />
-                <NotificationsPopover data={_notifications} />
-                <AccountPopover
+                {/* <Searchbar /> */}
+                {/* <LanguagePopover data={_langs} /> */}
+                {/* <NotificationsPopover data={_notifications} /> */}
+                {/* <AccountPopover
                   data={[
                     {
                       label: 'Home',
@@ -101,7 +101,7 @@ export function DashboardLayout({ sx, children, header }: DashboardLayoutProps) 
                       icon: <Iconify width={22} icon="solar:settings-bold-duotone" />,
                     },
                   ]}
-                />
+                /> */}
               </Box>
             ),
           }}
