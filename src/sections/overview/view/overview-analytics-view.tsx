@@ -1,5 +1,13 @@
+import React, { useEffect, useState } from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 import { _tasks, _posts, _timeline } from 'src/_mock';
 import { DashboardContent } from 'src/layouts/dashboard';
@@ -15,7 +23,28 @@ import { AnalyticsConversionRates } from '../analytics-conversion-rates';
 
 // ----------------------------------------------------------------------
 
+interface Job {
+  clientName: string;
+  jobId: number;
+  startTime: string;
+}
+
 export function OverviewAnalyticsView() {
+  const [jobs, setJobs] = useState<Job[]>([]);
+
+  useEffect(() => {
+    async function fetchJobs() {
+      try {
+        const response = await fetch('http://cpsqadawx01.cpfl.com.br:5000/api/jobs');
+        const data = await response.json();
+        setJobs(data.jobs);
+      } catch (error) {
+        console.error('Erro ao buscar dados dos jobs:', error);
+      }
+    }
+    fetchJobs();
+  }, []);
+
   return (
     <DashboardContent maxWidth="xl">
       <Grid container spacing={3}>
@@ -72,54 +101,33 @@ export function OverviewAnalyticsView() {
             }}
           />
         </Grid>
-        {/* 
-        <Grid xs={12} md={6} lg={8}>
-          <AnalyticsConversionRates
-            title="Conversion rates"
-            subheader="(+43%) than last year"
-            chart={{
-              categories: ['Italy', 'Japan', 'China', 'Canada', 'France'],
-              series: [
-                { name: '2022', data: [44, 55, 41, 64, 22] },
-                { name: '2023', data: [53, 32, 33, 52, 13] },
-              ],
-            }}
-          />
-        </Grid>
 
-        <Grid xs={12} md={6} lg={4}>
-          <AnalyticsCurrentSubject
-            title="Current subject"
-            chart={{
-              categories: ['English', 'History', 'Physics', 'Geography', 'Chinese', 'Math'],
-              series: [
-                { name: 'Series 1', data: [80, 50, 30, 40, 100, 20] },
-                { name: 'Series 2', data: [20, 30, 40, 80, 20, 80] },
-                { name: 'Series 3', data: [44, 76, 78, 13, 43, 10] },
-              ],
-            }}
-          />
+        {/* Tabela de Jobs */}
+        <Grid xs={12}>
+          <Typography variant="h6" gutterBottom>
+            Jobs Recentes
+          </Typography>
+          <TableContainer component={Paper}>
+            <Table aria-label="Tabela de Jobs">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Client Name</TableCell>
+                  <TableCell>Job ID</TableCell>
+                  <TableCell>Start Time</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {jobs.map((job) => (
+                  <TableRow key={job.jobId}>
+                    <TableCell>{job.clientName}</TableCell>
+                    <TableCell>{job.jobId}</TableCell>
+                    <TableCell>{new Date(job.startTime).toLocaleString()}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Grid>
-
-        <Grid xs={12} md={6} lg={4}>
-          <AnalyticsOrderTimeline title="Order timeline" list={_timeline} />
-        </Grid>
-
-        <Grid xs={12} md={6} lg={4}>
-          <AnalyticsTrafficBySite
-            title="Traffic by site"
-            list={[
-              { value: 'facebook', label: 'Facebook', total: 323234 },
-              { value: 'google', label: 'Google', total: 341212 },
-              { value: 'linkedin', label: 'Linkedin', total: 411213 },
-              { value: 'twitter', label: 'Twitter', total: 443232 },
-            ]}
-          />
-        </Grid>
-
-        <Grid xs={12} md={6} lg={8}>
-          <AnalyticsTasks title="Tasks" list={_tasks} />
-        </Grid> */}
       </Grid>
     </DashboardContent>
   );
